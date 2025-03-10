@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DevStagram - @yield('titulo')</title>
+    <title>Captura - @yield('titulo')</title>
     @vite('resources/css/app.css')
     @stack('styles')
     @livewireStyles
@@ -12,7 +12,7 @@
 <header class="bg-white shadow-lg">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <a href="{{ route('home') }}" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 transition duration-300">
-            DevStagram
+            Captura
         </a>
 
         @auth
@@ -66,7 +66,7 @@
 <footer class="mt-10 text-center p-5 text-gray-500">
     <div class="container mx-auto">
         <p class="font-bold uppercase">
-            DevStagram - Todos los derechos reservados {{ now()->year }}
+            Captura - Todos los derechos reservados {{ now()->year }}
         </p>
         <div class="flex justify-center space-x-4 mt-4 text-gray-400">
             <a href="#" class="hover:text-purple-500 transition">Términos</a>

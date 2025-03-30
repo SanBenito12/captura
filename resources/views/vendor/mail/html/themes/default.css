@@ -1,0 +1,35 @@
+/* Base */
+body {
+    background-color: #121212 !important;
+    color: #e2e8f0 !important;
+}
+
+.inner-body {
+    background-color: #1E1E1E !important;
+    border-color: #2E2E2E !important;
+}
+
+/* Botones */
+.button-primary {
+    background: linear-gradient(45deg, #8A4FFF, #E66FFF) !important;
+    border: none !important;
+    border-radius: 9999px !important;
+}
+
+.button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(138, 79, 255, 0.25) !important;
+}
+
+/* Textos */
+h1, h2, h3 {
+    color: #f3f4f6 !important;
+}
+
+a {
+    color: #8A4FFF !important;
+}
+
+.footer p, .footer a {
+    color: #9CA3AF !important;
+}

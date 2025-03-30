@@ -11,15 +11,30 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ImagenController;
-use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 // Rutas públicas
-Route::get('/', HomeController::class)->middleware('auth')->name('home');
+Route::get('/', HomeController::class)->middleware(['auth', 'verified'])->name('home'); // ← Protegida 'verified'
 
+// ==================== VERIFICACIÓN DE EMAIL ====================
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect()->route('home')->with('mensaje', '¡Email verificado correctamente!');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('mensaje', '¡Enlace de verificación reenviado!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+// ===============================================================
 
 // RUTAS DE THOR
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () { // ← Protegida 'verified'
     Route::get('/thor', [GeminiController::class, 'index'])->name('gemini.index');
     Route::post('/thor/chat', [GeminiController::class, 'chat'])->name('gemini.chat');
     Route::post('/thor/clear-history', [GeminiController::class, 'clearHistory'])->name('gemini.clearHistory');
@@ -37,7 +52,7 @@ Route::post('/login', [LoginController::class, 'store']);
 Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
 
 // RUTA PERFIL
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () { // ← Protegida 'verified'
     Route::get('/editar-perfil', [PerfilController::class, 'index'])->name('perfil.index');
 });
 Route::post('/editar-perfil', [PerfilController::class, 'store'])->name('perfil.store');
@@ -50,7 +65,7 @@ Route::post('/{user:username}/posts/{post}', [ComentarioController::class, 'stor
 Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
 // Rutas protegidas
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () { // ← Protegida 'verified'
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::post('/imagenes', [ImagenController::class, 'store'])->name('imagenes.store');
@@ -63,7 +78,3 @@ Route::delete('/posts/{post}/likes', [LikeController::class, 'destroy'])->name('
 // Siguiendo Usuarios
 Route::post('/{user:username}/follow', [FollowerController::class, 'store'])->name('users.follow');
 Route::delete('/{user:username}/unfollow', [FollowerController::class, 'destroy'])->name('users.unfollow');
-
-
-
-

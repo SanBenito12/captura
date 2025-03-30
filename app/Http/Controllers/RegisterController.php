@@ -17,10 +17,10 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
-        // Modificar el Request
+        // Modificar el Request (slug para username)
         $request->merge(['username' => Str::slug($request->username)]);
 
-        // Validacion
+        // Validación
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:30',
             'username' => "required|unique:users|min:3|max:20",
@@ -28,7 +28,6 @@ class RegisterController extends Controller
             'password' => 'required|confirmed|min:6'
         ]);
 
-        // Si la validación falla, redirige de vuelta con los errores
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -43,10 +42,13 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        // Autenticar un usuario
-        auth()->login($user);
+        // Enviar correo de verificación (¡NUEVO!)
+        $user->sendEmailVerificationNotification();
 
-        // Redireccionar usando el username del usuario autenticado
-        return redirect()->route('posts.index', $user->username);
+        // Redirigir a página de "verifica tu email" (¡CAMBIO IMPORTANTE!)
+        return redirect()->route('verification.notice')->with([
+            'message' => '¡Registro exitoso! Por favor verifica tu correo electrónico.',
+            'email' => $user->email // Opcional: para mostrar el email en la vista
+        ]);
     }
 }
